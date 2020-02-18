@@ -10,18 +10,16 @@ using System.Threading.Tasks;
 using System.Reflection;
 namespace SupplierWebApp.Queries.ReadRepository
 {
-    public class AreaQueries : BaseRepository<Area>, IAreaQueries
+    public class ConditionsQueries : BaseRepository<Conditions>, IConditionsQueries
     {
 
         private string _connectionString = string.Empty;
 
-        public AreaQueries(string constr) : base(constr)
+        public ConditionsQueries(string constr) : base(constr)
         {
             _connectionString = !string.IsNullOrWhiteSpace(constr) ? constr : throw new ArgumentNullException(nameof(constr));
 
         }
-
-
 
 
     }

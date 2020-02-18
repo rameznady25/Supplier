@@ -20,7 +20,7 @@ namespace SupplierWebApp.Commands.Contracts
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////
-        private const string title = "CQRS Task";
+        private const string title = "CQRS Task";   
 
         public AreaUpdateCommandHandler(IMediator mediator, IAreaRepository writeRepository, IMapper mapper)
         {
