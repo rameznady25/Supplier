@@ -37,7 +37,7 @@ namespace SupplierWebApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AreaViewModel>>> GetAreas()
         {
-            await _areaQueries.GetWhereAsync(new { AreaCod = 2});
+            //await _areaQueries.GetWhereAsync(new { AreaCod = 2});
 
             IEnumerable<Area> pvm = await _areaQueries.GetAllAsync();
             IEnumerable<AreaViewModel> areas = _mapper.Map<IEnumerable<Area>, IEnumerable<AreaViewModel>>(pvm);
@@ -66,66 +66,42 @@ namespace SupplierWebApp.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<Area>> PostAreas(Area value)
+        public async Task<int> PostAreas(Area value)
         {
-            var c = new CreateAreaCommand();
-            c.AreaName = value.AreaName;
-            c.AreaCod = value.AreaCod;
+            //var c = new CreateAreaCommand();
+            //c.AreaName = value.AreaName;
+            //c.AreaCod = value.AreaCod;
 
-            var result = false;
-            result = await _mediator.Send(c);
-            if (!result)
-            {
-                return value;
-            }
-            return null;
+            //var result = false;
+            //result = await _mediator.Send(c);
+            //if (!result)
+            //{
+            //    return value;
+            //}
+            //return null;
+            return await _areaQueries.Insert(value);
+           
 
         }
 
 
 
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<Area>> PutPost(int id, Area post)
+        [HttpPut]
+        public async Task<int> PutArea(Area value)
         {
-            if (id != post.AreaCod)
-            {
-                return BadRequest();
-            }
 
-
-            var c = new AreaUpdateCommand();
-            c.AreaName = post.AreaName;
-            c.AreaCod = post.AreaCod;
-
-
-            var result = false;
-            result = await _mediator.Send(c);
-            if (!result)
-            {
-                return post;
-            }
-            return NoContent();
+            return await _areaQueries.Update(value);
 
         }
 
 
 
-
-
-        [HttpDelete]
-        public async Task<ActionResult> Delete(DeleteAreaCommand Id)
+        [HttpDelete("{id}")]
+        public async Task<int> Delete(int Id)
         {
-            return Ok(await _mediator.Send(Id));
+            return await _areaQueries.Delete(Id);
         }
-
-
-
-
-
-
-
-
 
     }
 }

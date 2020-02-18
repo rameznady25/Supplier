@@ -11,6 +11,13 @@ namespace SupplierWebApp.Queries.ReadRepository.Infrastructure
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
         Task<T> GetWhereAsync(object obj);
+        Task <int> Insert(T entity);
+        Task<int> Update(T entity);
+        Task<int> Delete(int id);
+
+
+     
+
 
 
 

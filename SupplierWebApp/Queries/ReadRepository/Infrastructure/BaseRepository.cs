@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace SupplierWebApp.Queries.ReadRepository.Infrastructure
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-
 
         private string _connectionString = string.Empty;
 
@@ -18,10 +18,6 @@ namespace SupplierWebApp.Queries.ReadRepository.Infrastructure
             _connectionString = !string.IsNullOrWhiteSpace(constr) ? constr : throw new ArgumentNullException(nameof(constr));
 
         }
-
-
-
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -32,9 +28,6 @@ namespace SupplierWebApp.Queries.ReadRepository.Infrastructure
                 return await res;
             }
         }
-
-
-
 
         public async Task<T> GetByIdAsync(int id)
         {
@@ -81,6 +74,52 @@ namespace SupplierWebApp.Queries.ReadRepository.Infrastructure
 
 
 
+        }
+
+        public async Task<int> Insert (T entity)
+        {
+            var columns = GetColumns();
+            var stringOfColumns = string.Join(", ", columns);
+            var stringOfParameters = string.Join(", ", columns.Select(e => "@" + e));
+            var query = $"insert into {typeof(T).Name} ({stringOfColumns}) values ({stringOfParameters})";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+               
+              return await connection.ExecuteAsync(query, entity);
+            }
+        }
+
+        public async  Task <int> Update(T entity)
+        {
+            var columns = GetColumns();
+            var stringOfColumns = string.Join(", ", columns.Select(e => $"{e} = @{e}"));
+            var query = $"update {typeof(T).Name} set {stringOfColumns} where Id = @Id";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+               
+               return await connection.ExecuteAsync(query, entity);
+            }
+        }
+
+        public async Task<int> Delete (int id)
+        {
+            var query = $"delete from  {typeof(T).Name}  where Id = @Id";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+
+                return await connection.ExecuteAsync(query);
+            }
+        }
+
+        protected IEnumerable<string> GetColumns()
+        {
+            return typeof(T)
+                    .GetProperties()
+                     .Where(e => e.Name != "Id" && !e.PropertyType.GetTypeInfo().IsGenericType)
+                    .Select(e => e.Name);
         }
 
 

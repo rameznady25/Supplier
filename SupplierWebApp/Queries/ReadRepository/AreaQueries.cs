@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.Reflection;
 namespace SupplierWebApp.Queries.ReadRepository
 {
     public class AreaQueries : BaseRepository<Area>, IAreaQueries
@@ -37,6 +37,30 @@ namespace SupplierWebApp.Queries.ReadRepository
         }
 
 
+        public new async Task<int> Update(Area value)
+        {
+            var columns = GetColumns();
+            var stringOfColumns = string.Join(", ", columns.Select(e => $"{e} = @{e}"));
+            var query = $"update {typeof(Area).Name} set {stringOfColumns} where AreaCod = @AreaCod";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+
+                return await connection.ExecuteAsync(query, value);
+            }
+
+        }
+
+        public async new Task<int> Delete(int id)
+        {
+            var query = $"delete from  {typeof(Area).Name}  where AreaCod = @AreaCod";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+
+                return await connection.ExecuteAsync(query,new {AreaCod =id });
+            }
+        }
 
 
 
